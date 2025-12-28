@@ -20,8 +20,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if err != nil {
 		panic(fmt.Sprintf("Failed to create MongoDB connection: %v", err))
 	}
-
-	// Test the connection
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	err = client.Ping(ctx, nil)

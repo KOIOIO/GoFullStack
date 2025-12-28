@@ -37,7 +37,7 @@ func (l *RegisterLogic) Register(in *User.RegisterRequest) (*User.RegisterRespon
 		}, nil
 	}
 
-	// Check if username already exists
+	//todo 目前先使用逻辑查重，后面在学MongoDB是否可以建立唯一索引
 	collection := l.svcCtx.MongoDB.Database(l.svcCtx.Config.Mongo.Database).Collection("users")
 	count, err := collection.CountDocuments(l.ctx, bson.M{"username": in.Username})
 	if err != nil {
@@ -54,7 +54,7 @@ func (l *RegisterLogic) Register(in *User.RegisterRequest) (*User.RegisterRespon
 		}, nil
 	}
 
-	// Create new user
+	// 承接用户
 	newUser := types.UserInfo{
 		Username:  in.Username,
 		Password:  in.Password, // 生产环境务必加密（如bcrypt）
@@ -78,8 +78,7 @@ func (l *RegisterLogic) Register(in *User.RegisterRequest) (*User.RegisterRespon
 			Message: "Failed to register user",
 		}, nil
 	}
-
-	// 核心修改：将InsertedID转为ObjectId字符串
+	//将InsertedID转为ObjectId字符串
 	insertedID, ok := result.InsertedID.(primitive.ObjectID)
 	if !ok {
 		return &User.RegisterResponse{
@@ -87,7 +86,7 @@ func (l *RegisterLogic) Register(in *User.RegisterRequest) (*User.RegisterRespon
 			Message: "Failed to parse ObjectID",
 		}, fmt.Errorf("invalid ObjectID type")
 	}
-	objectIDStr := insertedID.Hex() // 转为字符串（如：6951264f02a82376d417663a）
+	objectIDStr := insertedID.Hex()
 
 	// 返回结果：新增_id字段
 	return &User.RegisterResponse{

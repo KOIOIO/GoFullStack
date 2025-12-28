@@ -4,19 +4,19 @@ import (
 	"Register_Login_Rpc/internal/config"
 	"context"
 	"fmt"
+	"time"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 func connection(c config.Config) (*mongo.Client, error) {
 	uri := fmt.Sprintf("mongodb://%s", c.Mongo.Hosts[0])
 	clientOptions := options.Client().ApplyURI(uri)
 
-	// 恢复认证配置
 	clientOptions.SetAuth(options.Credential{
 		Username:      c.Mongo.User,
-		Password:      c.Mongo.Password, // 注意：go-zero内置MongoConf的密码字段是Pass，不是Password！
+		Password:      c.Mongo.Password,
 		AuthSource:    c.Mongo.AuthSource,
 		AuthMechanism: "SCRAM-SHA-256",
 	})

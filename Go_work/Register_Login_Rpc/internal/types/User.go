@@ -7,10 +7,10 @@ import (
 )
 
 type UserInfo struct {
-	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	Username string             `bson:"username" json:"username"`
-	Password string             `bson:"password" json:"password"`
-	Email    string             `bson:"email" json:"email"`
-	CreatedAt time.Time         `bson:"created_at" json:"created_at"`
-	UpdatedAt time.Time         `bson:"updated_at" json:"updated_at"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Username  string             `bson:"username" json:"username" unique:"true"`
+	Password  string             `bson:"password" json:"password"`
+	Email     string             `bson:"email" json:"email"`
+	CreatedAt time.Time          `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time          `bson:"updated_at" json:"updated_at"`
 }
