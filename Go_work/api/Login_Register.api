@@ -1,0 +1,33 @@
+syntax = "v1"
+
+type (
+	UserLoginRequest {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	UserLoginResponse {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+		Token   string `json:"token"`
+	}
+	UserRegisterRequest { // 修正原拼写错误：Requset -> Request
+		UserName        string `json:"username"`
+		Password        string `json:"password"`
+		ConfirmPassword string `json:"confirm_password"` // 修正大小写规范
+		Email           string `json:"email"`
+	}
+	UserRegisterResponse {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+		UserId  string `json:"user_id"` // 修正命名规范：user_id -> UserId（go习惯）
+	}
+)
+
+service LoginRegister { // 修正原拼写：Logion_Register -> LoginRegister（规范命名）
+	@handler Login
+	post /login (UserLoginRequest) returns (UserLoginResponse)
+
+	@handler Register
+	post /register (UserRegisterRequest) returns (UserRegisterResponse)
+}
+

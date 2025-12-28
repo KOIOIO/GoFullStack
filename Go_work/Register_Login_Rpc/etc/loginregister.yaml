@@ -1,0 +1,15 @@
+Name: loginregister.rpc
+ListenOn: 0.0.0.0:9100
+Etcd:
+  Hosts:
+  - 127.0.0.1:2379
+  Key: loginregister.rpc
+
+Mongo:
+  Hosts:
+    - 127.0.0.1:27017
+  Database: login_register
+  User: wwy
+  Password: "123456"
+  AuthSource: admin
+  AuthMechanism: SCRAM-SHA-256
