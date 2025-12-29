@@ -12,6 +12,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type RegisterLogic struct {
@@ -54,10 +55,17 @@ func (l *RegisterLogic) Register(in *User.RegisterRequest) (*User.RegisterRespon
 		}, nil
 	}
 
+	tempPassword, err := l.bcryptPassword(in.Password)
+	if err != nil {
+		return &User.RegisterResponse{
+			Code:    500,
+			Message: "Error encrypting password",
+		}, err
+	}
 	// 承接用户
 	newUser := types.UserInfo{
 		Username:  in.Username,
-		Password:  in.Password, // 生产环境务必加密（如bcrypt）
+		Password:  tempPassword, // 生产环境务必加密（如bcrypt）
 		Email:     in.Email,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -94,4 +102,12 @@ func (l *RegisterLogic) Register(in *User.RegisterRequest) (*User.RegisterRespon
 		Message: "User registered successfully",
 		UserId:  objectIDStr,
 	}, nil
+}
+
+func (l *RegisterLogic) bcryptPassword(password string) (string, error) {
+	hashbytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashbytes), nil
 }
