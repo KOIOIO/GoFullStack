@@ -15,6 +15,8 @@ import (
 
 var configFile = flag.String("f", "etc/loginregister.yaml", "the config file")
 
+var LogPath = flag.String("log", "logs", "the log path")
+
 func main() {
 	flag.Parse()
 
@@ -26,7 +28,7 @@ func main() {
 
 	// 注册 CORS 中间件，确保每个响应都包含跨域头
 	server.Use(middleware.CorsMiddleware())
-	server.Use(middleware.LoggerMiddleware(c.Log.Path))
+	server.Use(middleware.LoggerMiddleware(*LogPath))
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
