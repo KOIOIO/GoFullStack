@@ -6,6 +6,7 @@ import (
 
 	"api/internal/config"
 	"api/internal/handler"
+	"api/internal/middleware"
 	"api/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
@@ -22,6 +23,8 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
+	server.Use(middleware.CorsMiddleware())
+	server.Use(middleware.LoggerMiddleware(c.Log.Path))
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
