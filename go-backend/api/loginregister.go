@@ -23,6 +23,8 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
+
+	// 注册 CORS 中间件，确保每个响应都包含跨域头
 	server.Use(middleware.CorsMiddleware())
 	server.Use(middleware.LoggerMiddleware(c.Log.Path))
 

@@ -20,9 +20,29 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: LoginHandler(serverCtx),
 			},
 			{
+				Method: http.MethodOptions,
+				Path:   "/login",
+				Handler: func(w http.ResponseWriter, r *http.Request) {
+					w.Header().Set("Access-Control-Allow-Origin", "*")
+					w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+					w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+					w.WriteHeader(http.StatusOK)
+				},
+			},
+			{
 				Method:  http.MethodPost,
 				Path:    "/register",
 				Handler: RegisterHandler(serverCtx),
+			},
+			{
+				Method: http.MethodOptions,
+				Path:   "/register",
+				Handler: func(w http.ResponseWriter, r *http.Request) {
+					w.Header().Set("Access-Control-Allow-Origin", "*")
+					w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+					w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+					w.WriteHeader(http.StatusOK)
+				},
 			},
 		},
 	)
