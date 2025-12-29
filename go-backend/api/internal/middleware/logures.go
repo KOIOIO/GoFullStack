@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	retalog "github.com/lestrrat-go/file-rotatelogs"
@@ -68,19 +69,25 @@ func LoggerMiddleware(path string) rest.Middleware {
 
 // 初始化日志记录器
 func initLogger(path string) *logrus.Logger {
-	filePath := path
+	dir := path
+	if dir == "" {
+		dir = "log"
+	}
+	// 使用 Clean 保证路径规范
+	dir = filepath.Clean(dir)
 
 	// 确保日志目录存在
-	if err := os.MkdirAll("log", 0755); err != nil {
+	if err := os.MkdirAll(dir, 0755); err != nil {
 		fmt.Println("Failed to create log directory:", err)
 	}
 
 	logger := logrus.New()
 	logger.SetLevel(logrus.DebugLevel)
 
-	// 创建旋转日志
+	// 日志文件按日期轮转，文件名放在指定目录下
+	pattern := filepath.Join(dir, "app-%Y%m%d.log")
 	logWriter, err := retalog.New(
-		filePath+"%Y%m%d.log",
+		pattern,
 		retalog.WithMaxAge(7*24*time.Hour),
 		retalog.WithRotationTime(24*time.Hour),
 	)
