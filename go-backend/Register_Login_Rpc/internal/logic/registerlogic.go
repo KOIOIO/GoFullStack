@@ -55,6 +55,21 @@ func (l *RegisterLogic) Register(in *User.RegisterRequest) (*User.RegisterRespon
 		}, nil
 	}
 
+	EmailCount, err := l.svcCtx.MongoDB.Database(l.svcCtx.Config.Mongo.Database).Collection("users").CountDocuments(l.ctx, bson.M{"email": in.Email})
+	if err != nil {
+		return &User.RegisterResponse{
+			Code:    500,
+			Message: "Error checking email duplication",
+		}, err
+	}
+
+	if EmailCount > 0 {
+		return &User.RegisterResponse{
+			Code:    409,
+			Message: "Email already exists",
+		}, nil
+	}
+
 	tempPassword, err := l.bcryptPassword(in.Password)
 	if err != nil {
 		return &User.RegisterResponse{
