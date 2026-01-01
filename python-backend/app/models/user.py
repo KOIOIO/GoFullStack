@@ -15,7 +15,9 @@ class User:
             "username": username,
             "password": hashed_pwd.decode('utf-8'),
             "email": email,
-            "created_at": datetime.utcnow()
+            "confirm_password": hashed_pwd.decode('utf-8'),
+            "created_at": datetime.utcnow(),
+            "updated_at":datetime.utcnow()
         }
         result = User.collection.insert_one(user_data)
         return str(result.inserted_id)
