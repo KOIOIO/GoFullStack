@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: wwy
+      MONGO_INITDB_ROOT_PASSWORD: "123456"
+      MONGO_INITDB_DATABASE: login_register
+    volumes:
+      - mongo_data:/data/db
+
+  python-backend:
+    build:
+      context: ./GoFullStack/python-backend
+      dockerfile: Dockerfile
+    container_name: python-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+
+  go-rpc:
+    build:
+      context: ./GoFullStack/go-backend/Register_Login_Rpc
+      dockerfile: Dockerfile
+    container_name: go-rpc
+    restart: always
+    ports:
+      - "9100:9100"
+    depends_on:
+      - mongo
+
+  go-api:
+    build:
+      context: ./GoFullStack/go-backend
+      dockerfile: api/Dockerfile
+    container_name: go-api
+    restart: always
+    ports:
+      - "8888:8888"
+    depends_on:
+      - go-rpc
+
+  frontend:
+    build:
+      context: ./GoFullStack/frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - go-api
+      - python-backend
+
+volumes:
+  mongo_data:
