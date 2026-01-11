@@ -1,9 +1,9 @@
 Name: loginregister.rpc
 ListenOn: 0.0.0.0:9100
-Etcd:
-  Hosts:
-  - 127.0.0.1:2379
-  Key: loginregister.rpc
+# Etcd:
+#   Hosts:
+#   - 127.0.0.1:2379
+#   Key: loginregister.rpc
 
 Mongo:
   Hosts:
