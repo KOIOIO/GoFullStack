@@ -7,5 +7,5 @@ Mongo:
   AuthSource: admin
   AuthMechanism: SCRAM-SHA-256
 JWT:
-  SecretKey: "your_jwt_secret_key"  # 替换为实际密钥
+  SecretKey: "sadasdsadfsdfwdfdafd"  # 替换为实际密钥
   ExpireHours: 24
