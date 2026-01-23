@@ -60,19 +60,29 @@ export default {
       const centerX = canvas.width / 2;
       const centerY = canvas.height / 2;
 
+      // 星云色系
+      const colors = [
+        { r: 138, g: 43, b: 226 },  // BlueViolet
+        { r: 0, g: 191, b: 255 },   // DeepSkyBlue
+        { r: 255, g: 105, b: 180 }, // HotPink
+        { r: 0, g: 255, b: 255 },   // Cyan
+        { r: 255, g: 165, b: 0 },   // Orange
+        { r: 255, g: 255, b: 255 }  // White
+      ];
+
       // 初始化星星
       for (let i = 0; i < starCount; i++) {
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
           z: Math.random() * canvas.width, // 深度
-          o: '0.' + Math.floor(Math.random() * 99) + 1 // 透明度
+          color: colors[Math.floor(Math.random() * colors.length)] // 随机颜色
         });
       }
 
       const animate = () => {
         // 黑色背景，带一点透明度产生拖尾效果
-        ctx.fillStyle = "rgba(0, 0, 0, 0.1)"; 
+        ctx.fillStyle = "rgba(0, 0, 0, 0.2)"; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         for (let i = 0; i < starCount; i++) {
@@ -87,6 +97,8 @@ export default {
             star.z = canvas.width;
             star.x = Math.random() * canvas.width;
             star.y = Math.random() * canvas.height;
+            // 重置时也随机更新颜色
+            star.color = colors[Math.floor(Math.random() * colors.length)];
           }
 
           const k = 128.0 / star.z;
@@ -94,18 +106,24 @@ export default {
           const py = (star.y - centerY) * k + centerY;
 
           if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
-            const size = (1 - star.z / canvas.width) * 2.5;
-            const shade = parseInt((1 - star.z / canvas.width) * 255);
+            const size = (1 - star.z / canvas.width) * 3;
+            const alpha = 1 - star.z / canvas.width;
             
             // 颜色动态变化
-            ctx.fillStyle = "rgb(" + shade + "," + shade + "," + 255 + ")";
+            ctx.fillStyle = `rgba(${star.color.r}, ${star.color.g}, ${star.color.b}, ${alpha})`;
             ctx.beginPath();
             ctx.arc(px, py, size, 0, Math.PI * 2);
             ctx.fill();
+            
+            // 添加发光效果
+            if (size > 1.5) {
+                ctx.shadowBlur = size * 2;
+                ctx.shadowColor = `rgba(${star.color.r}, ${star.color.g}, ${star.color.b}, ${alpha})`;
+            } else {
+                ctx.shadowBlur = 0;
+            }
           }
         }
-        
-        // 绘制星云雾气 (可选，为了性能简单点可以先不加太复杂的)
         
         this.animationId = requestAnimationFrame(animate);
       };
